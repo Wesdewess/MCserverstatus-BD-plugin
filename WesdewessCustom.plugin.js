@@ -66,14 +66,21 @@ class McStatus {
     }
 
     createMainElement(){
+        //parent div
         let mcDiv = document.createElement('div')
         mcDiv.style.fontFamily = 'Century Gothic,monospace'
         mcDiv.style.fontSize = '20px'
-        mcDiv.innerHTML = 'Minecraft Servers'
         mcDiv.classList.add('minecraftServers')
         mcDiv.style.width = 'inherit'
         mcDiv.style.height = 'auto'
         mcDiv.style.backgroundColor = '#36393E'
+
+        //title
+        let pTitle = document.createElement('span')
+        pTitle.innerHTML = 'Server Status: '
+        pTitle.style.fontSize = '30px'
+        pTitle.style.fontWeight = 'bold'
+        mcDiv.appendChild(pTitle)
 
         let refreshButton = document.createElement('button')
         refreshButton.innerText = "refresh"
@@ -103,10 +110,10 @@ class McStatus {
                 document.getElementById("infoBox").innerHTML = "ip: "+ data.ip + 
                                                                 "\n players: " + data.players.online + "/"+ data.players.max +
                                                                 "\n MOTD: " + data.motd.html
-            } catch(e){
+                } catch(e){
 
-            }
-        })
+                }
+            })
             .catch(error => console.error('Error fetching minecraft server info:', error));
 
             
