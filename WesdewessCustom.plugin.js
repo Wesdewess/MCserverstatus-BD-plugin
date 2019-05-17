@@ -1,6 +1,6 @@
 //META{"name":"McStatus"}*//
 var lastRefresh = 1
-var currentServer = "DankPrison.com" //some random ip for testing purposes
+var currentServer = "mc.hypixel.net" //some random ip for testing purposes
 class McStatus {
 
     getName() {
@@ -38,8 +38,8 @@ class McStatus {
             }
             this.createMainElement()
         }
-       
-      this.serverStatusCheck()
+        this.readServerIp()
+        this.serverStatusCheck()
     }
 
     stop(){
@@ -99,7 +99,7 @@ class McStatus {
      
     serverStatusCheck(){
         let d = new Date()
-        let cooldown = 6000
+        let cooldown = 3000
         if(d.getTime() > (lastRefresh + cooldown)){ //check if the set cooldown before another refresh is allowed, has passed
 
             fetch("https://api.mcsrvstat.us/2/" + currentServer)
@@ -107,9 +107,16 @@ class McStatus {
             .then(data => {
                 console.log(data)
                 try{
-                document.getElementById("infoBox").innerHTML = "ip: "+ data.ip + 
-                                                                "\n players: " + data.players.online + "/"+ data.players.max +
-                                                                "\n MOTD: " + data.motd.html
+                    let online = data.online
+                    let status;
+                    if(online === true){
+                        status = '<div style="color: light-green; font-weight: bold;">online</div>'
+                    } else{
+                        status = '<div style="color: red; font-weight: bold;">offline</div>'
+                    }
+                    document.getElementById("infoBox").innerHTML = "Status: " + status +"ip: "+ data.ip + 
+                                                                    "\n players: " + data.players.online + "/"+ data.players.max +
+                                                                    "\n MOTD: " + data.motd.html
                 } catch(e){
 
                 }
@@ -121,6 +128,17 @@ class McStatus {
         } else {
             console.log("not enough time has passed")
         }
+    }
+
+    readServerIp(){
+        console.log("attempting to read the ip of the server from the text file")
+        try{
+        var blob = new Blob(["henk"], {type: "text/plain;charset=utf-8"});
+        blob.saveAs(blob, "testfile1.txt");
+        } catch(e){
+            console.log(e)
+        }
+        
     }
 
 }
