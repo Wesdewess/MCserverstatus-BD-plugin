@@ -1,17 +1,14 @@
-//META{"name":"wesdewess"}*//
+//META{"name":"McStatus"}*//
 var lastRefresh = 1
-var currentServer = "DankPrison.com"
-class wesdewess {
-    constructor() {  
-        
-    }
+var currentServer = "DankPrison.com" //some random ip for testing purposes
+class McStatus {
 
     getName() {
-        return "Wesdewess better discord plugin"
+        return "Better Discord Minecraft server status checker"
     }
 
     getDescription() {
-        return "do more stuff better!"
+        return "Show minecraft server information per discord server."
     }
 
     getVersion() {
