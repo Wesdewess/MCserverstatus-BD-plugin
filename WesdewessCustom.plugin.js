@@ -20,8 +20,10 @@ class McStatus {
     }
     
     start(){
-        console.log("started")
-
+        if(BdApi.loadData("McStatus", "test") === undefined){ //if the setting does not yet exist, create the setting
+            this.saveSetting("test", "mc.hypixel.net")
+        }
+        
         if(document.getElementsByClassName("minecraftServers")[0] == null){
             this.createMainElement()
         } else{
@@ -34,10 +36,7 @@ class McStatus {
         }
         
         this.serverStatusCheck()
-        this.saveSetting("henk", "henk is een steen")
-        
-        
-        
+        console.log("started")
     }
 
     stop(){
@@ -65,19 +64,17 @@ class McStatus {
         mcDiv.style.borderRadius = '30px 0 0 0'
         mcDiv.style.height = 'auto'
 
-        //info box, where server info is shown after fetch
-        let infoBox = document.createElement('span')
-        infoBox.setAttribute('id', "infoBox")
-        infoBox.style.cssFloat = 'right'
-        infoBox.style.marginLeft = '20px'
-        infoBox.style.marginRight = '20px'
-        infoBox.innerText = ""
-        mcDiv.appendChild(infoBox)
-
         //refresh button
         let refreshButton = document.createElement('button')
-        refreshButton.innerText = "refresh"
+        refreshButton.setAttribute('id', "refresh")
+        refreshButton.innerText = "Refresh"
         refreshButton.style.cssFloat = 'right'
+        refreshButton.style.color = '#fff'
+        refreshButton.style.backgroundColor = '#7289da'
+        refreshButton.style.borderRadius = '3px'
+        refreshButton.style.minHeight = '20px'
+        refreshButton.style.marginLeft = '10px'
+        refreshButton.style.marginRight = '10px'
         refreshButton.addEventListener('click', this.serverStatusCheck)
         mcDiv.appendChild(refreshButton)
 
@@ -89,6 +86,15 @@ class McStatus {
         //addButton.addEventListener('click', this.addServerAlert)
         mcDiv.appendChild(addButton)
 
+        //info box, where server info is shown after fetch
+        let infoBox = document.createElement('span')
+        infoBox.setAttribute('id', "infoBox")
+        infoBox.style.cssFloat = 'right'
+        infoBox.style.marginLeft = '20px'
+        infoBox.style.marginRight = '20px'
+        infoBox.innerText = ""
+        mcDiv.appendChild(infoBox)
+
         let channelList = document.getElementsByClassName("appMount-3lHmkl bda-dark da-appMount")[0]
         channelList.appendChild(mcDiv)
         channelList.insertBefore(mcDiv, channelList.childNodes[3]);
@@ -97,10 +103,11 @@ class McStatus {
     }
 
      
-    serverStatusCheck(){
+    serverStatusCheck(e){
         let d = new Date()
         let cooldown = 3000
-        let currentServer = "mc.hypixel.net" //some random ip for testing purposes
+        let currentServer = BdApi.loadData("McStatus", "test") //some random ip for testing purposes
+        console.log(currentServer)
         if(d.getTime() > (lastRefresh + cooldown)){ //check if the set cooldown before another refresh is allowed, has passed
 
             fetch("https://api.mcsrvstat.us/2/" + currentServer)
@@ -127,6 +134,7 @@ class McStatus {
         } else {
             console.log("not enough time has passed")
         }
+        
     }
 
     addServerAlert(){
