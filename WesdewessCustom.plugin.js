@@ -32,8 +32,9 @@ class McStatus {
             }
             this.createMainElement()
         }
-        this.readServerIp()
+        
         this.serverStatusCheck()
+        this.saveSetting()
     }
 
     stop(){
@@ -76,11 +77,19 @@ class McStatus {
         pTitle.style.fontWeight = 'bold'
         mcDiv.appendChild(pTitle)
 
+        //refresh button
         let refreshButton = document.createElement('button')
         refreshButton.innerText = "refresh"
         refreshButton.addEventListener('click', this.serverStatusCheck)
         mcDiv.appendChild(refreshButton)
 
+        //add server button
+        let addButton = document.createElement('button')
+        addButton.innerText = "+"
+        addButton.addEventListener('click', this.addServerAlert)
+        mcDiv.appendChild(addButton)
+
+        //info box, where server info is shown after fetch
         let infoBox = document.createElement('span')
         infoBox.setAttribute('id', "infoBox")
         infoBox.innerText = ""
@@ -124,13 +133,22 @@ class McStatus {
         }
     }
 
-    readServerIp(){
-        console.log("attempting to read the ip of the server from the text file")
-        try{
-        var blob = new Blob(["henk"], {type: "text/plain;charset=utf-8"});
-        blob.saveAs(blob, "testfile1.txt");
-        } catch(e){
-            console.log(e)
+    addServerAlert(){
+        alert("add a minecraft server", "<div class='bd-modal-inner inner-1JeGVc'><div class='header header-1R_AjF'><div class='title'>Content Errors</div><div class='bd-modal-body'><div class='tab-bar-container'></div></div></div><div class='footer footer-2yfCgX'><button type='button'>Okay</button></div></div>")
+    }
+
+    saveSetting(k, d){
+        if(k !== null && d !== null){
+            BdApi.saveData("McStatus", k, d)
+        }
+    }
+    loadSetting(k){
+        let d;
+        if(k !== null){
+            d = BdApi.loadData("McStatus", k)
+            return d
+        }else{
+            console.log("no key was provided, unable to load setting")
         }
         
     }
