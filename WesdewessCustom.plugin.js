@@ -18,12 +18,6 @@ class McStatus {
     getAuthor() {
         return "wesdewess"
     }
-
-    
-    load(){
-        console.log("loaded")
-    }
-    
     
     start(){
         console.log("started")
