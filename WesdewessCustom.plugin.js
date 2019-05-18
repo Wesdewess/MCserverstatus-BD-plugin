@@ -1,6 +1,6 @@
 //META{"name":"McStatus"}*//
 var lastRefresh = 1
-var currentServer = "mc.hypixel.net" //some random ip for testing purposes
+
 class McStatus {
 
     getName() {
@@ -34,7 +34,10 @@ class McStatus {
         }
         
         this.serverStatusCheck()
-        this.saveSetting()
+        this.saveSetting("henk", "henk is een steen")
+        
+        
+        
     }
 
     stop(){
@@ -45,64 +48,59 @@ class McStatus {
         console.log("stopped")
     }
 
-    
-    changeCheckSetup(){
-        let channelList = document.getElementsByClassName("channels-Ie2l6A vertical-V37hAW flex-1O1GKY directionColumn-35P_nr da-channels da-vertical da-flex da-directionColumn")[0]
-        let observer = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-              console.log(mutation); // check if your son is the one removed
-            });
-          });
-          
-          // configuration of the observer:
-          let config = {
-            childList: true
-          };   
+    onSwitch(){
+        console.log("switched")
     }
 
     createMainElement(){
         //parent div
         let mcDiv = document.createElement('div')
+        mcDiv.classList.add('minecraftServers')
         mcDiv.style.fontFamily = 'Century Gothic,monospace'
         mcDiv.style.fontSize = '20px'
-        mcDiv.classList.add('minecraftServers')
-        mcDiv.style.width = 'inherit'
+        mcDiv.style.color = '#839496'
+        mcDiv.style.backgroundColor = '#36393f'
+        mcDiv.style.marginLeft = '312px'
+        mcDiv.style.paddingTop = '2px'
+        mcDiv.style.borderRadius = '30px 0 0 0'
         mcDiv.style.height = 'auto'
-        mcDiv.style.backgroundColor = '#36393E'
 
-        //title
-        let pTitle = document.createElement('span')
-        pTitle.innerHTML = 'Server Status: '
-        pTitle.style.fontSize = '30px'
-        pTitle.style.fontWeight = 'bold'
-        mcDiv.appendChild(pTitle)
+        //info box, where server info is shown after fetch
+        let infoBox = document.createElement('span')
+        infoBox.setAttribute('id', "infoBox")
+        infoBox.style.cssFloat = 'right'
+        infoBox.style.marginLeft = '20px'
+        infoBox.style.marginRight = '20px'
+        infoBox.innerText = ""
+        mcDiv.appendChild(infoBox)
 
         //refresh button
         let refreshButton = document.createElement('button')
         refreshButton.innerText = "refresh"
+        refreshButton.style.cssFloat = 'right'
         refreshButton.addEventListener('click', this.serverStatusCheck)
         mcDiv.appendChild(refreshButton)
 
         //add server button
         let addButton = document.createElement('button')
+        addButton.classList.add('add-button')
+        addButton.style.cssFloat = 'right'
         addButton.innerText = "+"
-        addButton.addEventListener('click', this.addServerAlert)
+        //addButton.addEventListener('click', this.addServerAlert)
         mcDiv.appendChild(addButton)
 
-        //info box, where server info is shown after fetch
-        let infoBox = document.createElement('span')
-        infoBox.setAttribute('id', "infoBox")
-        infoBox.innerText = ""
-        mcDiv.appendChild(infoBox)
-
-        let channelList = document.getElementsByClassName("channels-Ie2l6A vertical-V37hAW flex-1O1GKY directionColumn-35P_nr da-channels da-vertical da-flex da-directionColumn")[0]
+        let channelList = document.getElementsByClassName("appMount-3lHmkl bda-dark da-appMount")[0]
         channelList.appendChild(mcDiv)
+        channelList.insertBefore(mcDiv, channelList.childNodes[3]);
+
+        //BdApi.onRemoved(document.getElementsByClassName("minecraftServers")[0], this.createMainElement)
     }
 
      
     serverStatusCheck(){
         let d = new Date()
         let cooldown = 3000
+        let currentServer = "mc.hypixel.net" //some random ip for testing purposes
         if(d.getTime() > (lastRefresh + cooldown)){ //check if the set cooldown before another refresh is allowed, has passed
 
             fetch("https://api.mcsrvstat.us/2/" + currentServer)
@@ -113,13 +111,11 @@ class McStatus {
                     let online = data.online
                     let status;
                     if(online === true){
-                        status = '<div style="color: light-green; font-weight: bold;">online</div>'
+                        status = '<span style="color: green; font-weight: bold;">online</span>'
                     } else{
-                        status = '<div style="color: red; font-weight: bold;">offline</div>'
+                        status = '<span style="color: red; font-weight: bold;">offline</span>'
                     }
-                    document.getElementById("infoBox").innerHTML = "Status: " + status +"ip: "+ data.ip + 
-                                                                    "\n players: " + data.players.online + "/"+ data.players.max +
-                                                                    "\n MOTD: " + data.motd.html
+                    document.getElementById("infoBox").innerHTML = "Status: " + status +"IP: "+ data.ip + " Players: " + data.players.online + "/"+ data.players.max + " MOTD: " + data.motd.html
                 } catch(e){
 
                 }
@@ -137,20 +133,19 @@ class McStatus {
         alert("add a minecraft server", "<div class='bd-modal-inner inner-1JeGVc'><div class='header header-1R_AjF'><div class='title'>Content Errors</div><div class='bd-modal-body'><div class='tab-bar-container'></div></div></div><div class='footer footer-2yfCgX'><button type='button'>Okay</button></div></div>")
     }
 
+    //interactions with the config file
     saveSetting(k, d){
-        if(k !== null && d !== null){
-            BdApi.saveData("McStatus", k, d)
-        }
+        BdApi.saveData("McStatus", k, d)
     }
     loadSetting(k){
         let d;
-        if(k !== null){
-            d = BdApi.loadData("McStatus", k)
-            return d
-        }else{
-            console.log("no key was provided, unable to load setting")
-        }
+        d = BdApi.loadData("McStatus", k)
+        return d
         
+    }
+    deleteSetting(k){
+        BdApi.deleteData("McStatus",k)
     }
 
 }
+
