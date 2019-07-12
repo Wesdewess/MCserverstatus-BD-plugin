@@ -40,8 +40,8 @@ class McStatus {
             }
             this.createMainElement()
         }
-        
         this.serverStatusCheck()
+        this.refreshInterval = setInterval(()=> {this.serverStatusCheck()},60000) 
         console.log("started")
     }
 
@@ -50,6 +50,7 @@ class McStatus {
             document.getElementsByClassName("minecraftServers")[0].innerHTML = ' '
             document.getElementsByClassName("minecraftServers")[0].remove()
         }
+        clearInterval(this.refreshInterval)
         console.log("stopped")
     }
 
@@ -112,32 +113,33 @@ class McStatus {
     serverStatusCheck(e){
         let d = new Date()
         if(d.getTime() > (this.lastRefresh + this.cooldown)){ //check if the set cooldown before another refresh is allowed, has passed
-            console.log(this.loadSetting())
+            //console.log(this.loadSetting())
             let ip = this.loadSetting()
             fetch("https://api.mcsrvstat.us/2/" + ip)
             .then(response => response.json())
             .then(data => {
-                console.log(data)
+                
                 try{
                     let online = data.online
                     let status;
-                    let playersOnline = "Online players:"
-                    for(let i=0; i<data.players.list.length; i++){
-                        playersOnline = playersOnline+ "\n" + data.players.list[i] 
-                    }
                     
-                    if(online === true){
+                    if(online == true){
+                        let playersOnline = "Online players:"
+                        for(let i=0; i<data.players.list.length; i++){
+                            playersOnline = playersOnline+ "\n" + data.players.list[i]
+                            
+                        }
                         status = '<span style="color: green; font-weight: bold;">online</span>'
-                        document.getElementById("infoBox").innerHTML = `IP: ${data.ip} Status: ${status} <span title="${playersOnline}" >Players: ${data.players.online} /${data.players.max}</span> MOTD: ` + data.motd.html
+                        document.getElementById("infoBox").innerHTML = `<div>IP: ${data.ip} Status: ${status} <span title="${playersOnline}" >Players: ${data.players.online} /${data.players.max}</span> MOTD: ${data.motd.html} </div>`
                     } else{
                         status = '<span style="color: red; font-weight: bold;">offline</span>'
-                        document.getElementById("infoBox").innerHTML = "IP: "+ ip +" Status: " + status +" "
+                        document.getElementById("infoBox").innerHTML = "<div>IP: "+ ip +" Status: " + status +"</div>"
                     }
                     
-                    console.log(online)
                 } catch(e){
 
                 }
+                //console.log(data)
             })
             .catch(error => console.error('Error fetching minecraft server info:', error));
 
