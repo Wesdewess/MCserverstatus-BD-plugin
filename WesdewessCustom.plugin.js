@@ -113,19 +113,28 @@ class McStatus {
         let d = new Date()
         if(d.getTime() > (this.lastRefresh + this.cooldown)){ //check if the set cooldown before another refresh is allowed, has passed
             console.log(this.loadSetting())
-            fetch("https://api.mcsrvstat.us/2/" + this.loadSetting())
+            let ip = this.loadSetting()
+            fetch("https://api.mcsrvstat.us/2/" + ip)
             .then(response => response.json())
             .then(data => {
                 console.log(data)
                 try{
                     let online = data.online
                     let status;
+                    let playersOnline = "Online players:"
+                    for(let i=0; i<data.players.list.length; i++){
+                        playersOnline = playersOnline+ "\n" + data.players.list[i] 
+                    }
+                    
                     if(online === true){
                         status = '<span style="color: green; font-weight: bold;">online</span>'
+                        document.getElementById("infoBox").innerHTML = `IP: ${data.ip} Status: ${status} <span title="${playersOnline}" >Players: ${data.players.online} /${data.players.max}</span> MOTD: ` + data.motd.html
                     } else{
                         status = '<span style="color: red; font-weight: bold;">offline</span>'
+                        document.getElementById("infoBox").innerHTML = "IP: "+ ip +" Status: " + status +" "
                     }
-                    document.getElementById("infoBox").innerHTML = "Status: " + status +"IP: "+ data.ip + " Players: " + data.players.online + "/"+ data.players.max + " MOTD: " + data.motd.html
+                    
+                    console.log(online)
                 } catch(e){
 
                 }
