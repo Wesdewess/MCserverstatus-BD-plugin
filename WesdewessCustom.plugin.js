@@ -1,5 +1,4 @@
 //META{"name":"McStatus"}*//
-var lastRefresh = 1
 
 class McStatus {
 
@@ -20,6 +19,13 @@ class McStatus {
     }
     
     start(){
+        //variables
+        
+        this.cooldown = 3000
+        this.lastRefresh = 1
+        this.currentServer = this.loadSetting()
+        console.log(this.currentServer)
+
         if(BdApi.loadData("McStatus", "test") === undefined){ //if the setting does not yet exist, create the setting
             this.saveSetting("test", "mc.hypixel.net")
         }
@@ -75,7 +81,7 @@ class McStatus {
         refreshButton.style.minHeight = '20px'
         refreshButton.style.marginLeft = '10px'
         refreshButton.style.marginRight = '10px'
-        refreshButton.addEventListener('click', this.serverStatusCheck)
+        refreshButton.addEventListener('click', () => this.serverStatusCheck())
         mcDiv.appendChild(refreshButton)
 
         //add server button
@@ -105,12 +111,9 @@ class McStatus {
      
     serverStatusCheck(e){
         let d = new Date()
-        let cooldown = 3000
-        let currentServer = BdApi.loadData("McStatus", "test") //some random ip for testing purposes
-        console.log(currentServer)
-        if(d.getTime() > (lastRefresh + cooldown)){ //check if the set cooldown before another refresh is allowed, has passed
-
-            fetch("https://api.mcsrvstat.us/2/" + currentServer)
+        if(d.getTime() > (this.lastRefresh + this.cooldown)){ //check if the set cooldown before another refresh is allowed, has passed
+            console.log(this.loadSetting())
+            fetch("https://api.mcsrvstat.us/2/" + this.loadSetting())
             .then(response => response.json())
             .then(data => {
                 console.log(data)
@@ -130,7 +133,7 @@ class McStatus {
             .catch(error => console.error('Error fetching minecraft server info:', error));
 
             
-            lastRefresh = d.getTime()
+            this.lastRefresh = d.getTime()
         } else {
             console.log("not enough time has passed")
         }
@@ -145,9 +148,9 @@ class McStatus {
     saveSetting(k, d){
         BdApi.saveData("McStatus", k, d)
     }
-    loadSetting(k){
+    loadSetting(){
         let d;
-        d = BdApi.loadData("McStatus", k)
+        d =  BdApi.loadData("McStatus", "test")
         return d
         
     }
