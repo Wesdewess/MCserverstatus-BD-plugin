@@ -41,7 +41,7 @@ class McStatus {
             this.createMainElement()
         }
         this.serverStatusCheck()
-        this.refreshInterval = setInterval(()=> {this.serverStatusCheck()},60000) 
+        this.refreshInterval = setInterval(()=> {this.serverStatusCheck()},30000) 
         console.log("started")
     }
 
