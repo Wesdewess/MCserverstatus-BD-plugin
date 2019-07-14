@@ -125,11 +125,13 @@ class McStatus {
                     
                     if(online == true){
                         let playersOnline = "Online players:"
-                        if(data.players.online >0){
+                        if(data.players.list){
                             for(let i=0; i<data.players.list.length; i++){
                                 playersOnline = playersOnline+ "\n" + data.players.list[i]
                             
                             }
+                        } else{
+                            playersOnline = playersOnline+ "\n" + "This server does not share player names"
                         }
                         status = '<span style="color: green; font-weight: bold;">online</span>'
                         document.getElementById("infoBox").innerHTML = `<div>IP: ${data.ip} Status: ${status} <span title="${playersOnline}" >Players: ${data.players.online} /${data.players.max}</span> MOTD: ${data.motd.html} </div>`
