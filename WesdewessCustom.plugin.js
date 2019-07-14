@@ -125,9 +125,11 @@ class McStatus {
                     
                     if(online == true){
                         let playersOnline = "Online players:"
-                        for(let i=0; i<data.players.list.length; i++){
-                            playersOnline = playersOnline+ "\n" + data.players.list[i]
+                        if(data.players.online >0){
+                            for(let i=0; i<data.players.list.length; i++){
+                                playersOnline = playersOnline+ "\n" + data.players.list[i]
                             
+                            }
                         }
                         status = '<span style="color: green; font-weight: bold;">online</span>'
                         document.getElementById("infoBox").innerHTML = `<div>IP: ${data.ip} Status: ${status} <span title="${playersOnline}" >Players: ${data.players.online} /${data.players.max}</span> MOTD: ${data.motd.html} </div>`
@@ -139,7 +141,7 @@ class McStatus {
                 } catch(e){
 
                 }
-                //console.log(data)
+                console.log(data)
             })
             .catch(error => console.error('Error fetching minecraft server info:', error));
 
