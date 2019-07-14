@@ -134,7 +134,7 @@ class McStatus {
                             playersOnline = playersOnline+ "\n" + "This server does not share player names"
                         }
                         status = '<span style="color: green; font-weight: bold;">online</span>'
-                        document.getElementById("infoBox").innerHTML = `<div>IP: ${data.ip} Status: ${status} <span title="${playersOnline}" >Players: ${data.players.online} /${data.players.max}</span> MOTD: ${data.motd.html} </div>`
+                        document.getElementById("infoBox").innerHTML = `<div>IP: ${data.ip} Status: ${status} <span title="${playersOnline}" >Players: ${data.players.online}/${data.players.max}</span> MOTD: ${data.motd.html} </div>`
                     } else{
                         status = '<span style="color: red; font-weight: bold;">offline</span>'
                         document.getElementById("infoBox").innerHTML = "<div>IP: "+ ip +" Status: " + status +"</div>"
