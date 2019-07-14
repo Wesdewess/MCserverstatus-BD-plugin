@@ -7,7 +7,7 @@ class McStatus {
     }
 
     getDescription() {
-        return "Show minecraft server information per discord server."
+        return "Show status information of you favorite minecraft servers"
     }
 
     getVersion() {
