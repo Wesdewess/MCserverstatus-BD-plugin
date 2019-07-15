@@ -66,6 +66,7 @@ class McStatus {
         this.currentServer = ip
         BdApi.saveData("McStatus","ip", ip)
         BdApi.saveData("McStatus","lastOnline", "")
+        this.lastKnowState.time = ""
         BdApi.showToast(`Ip changed to: ${this.currentServer}`, {})
         this.serverStatusCheck()})
         settingsElement.appendChild(text)
