@@ -25,16 +25,13 @@ class McStatus {
         this.lastRefresh = 1
         this.currentServer
 
-        if(BdApi.loadData("McStatus", "ip") === undefined){ //if the setting does not yet exist, create the setting
+        if(BdApi.loadData("McStatus", "ip") === undefined){ 
             BdApi.saveData("McStatus", "ip", "mc.hypixel.net")
             BdApi.saveData("McStatus","lastOnline", "")
             BdApi.alert("Minecraft server status checker","Thank you for using this plugin! To keep tabs on your favorite minecraft server, go to the 'plugins' tab in your discord settings and click on 'settings' for this plugin. For more information go to: https://github.com/Wesdewess/MCserverstatus-BD-plugin")
         }
         this.lastKnowState.time = BdApi.loadData("McStatus","lastOnline")
         this.loadSetting()
-        console.log(this.currentServer)
-
-        
         
         if(document.getElementsByClassName("minecraftServers")[0] == null){
             this.createMainElement()
@@ -48,7 +45,6 @@ class McStatus {
         }
         this.serverStatusCheck()
         this.refreshInterval = setInterval(()=> {this.serverStatusCheck()},30000) 
-        console.log("started")
     }
     getSettingsPanel(){
         let text = document.createElement('span')
@@ -87,10 +83,6 @@ class McStatus {
         }
         clearInterval(this.refreshInterval)
         console.log("stopped")
-    }
-
-    onSwitch(){
-        console.log("switched")
     }
 
     createMainElement(){
@@ -154,16 +146,13 @@ class McStatus {
     serverStatusCheck(e){
         let d = new Date()
         if(d.getTime() > (this.lastRefresh + this.cooldown)){ //check if the set cooldown before another refresh is allowed, has passed
-            //console.log(this.loadSetting())
             this.loadSetting()
             fetch("https://api.mcsrvstat.us/2/" + this.currentServer)
             .then(response => response.json())
             .then(data => {
-                
                 try{
                     let online = data.online
                     let status;
-
                     if(online == true){
                         let playersOnline = "Online players:"
                         if(data.players.list){
@@ -193,25 +182,15 @@ class McStatus {
                         document.getElementById("infoBox").innerHTML = "<div><span style='font-weight: bold'>"+ this.currentServer +":</span> Status: " + status +" Last seen online at: "+ this.lastKnowState.time + "</div>"
                         
                     }
-                     
                 } catch(e){
 
                 }
-                console.log(data)
- 
             })
             .catch(error => console.error('Error fetching minecraft server info:', error));
-
-            
             this.lastRefresh = d.getTime()
         } else {
             console.log("not enough time has passed")
-        }
-        
-    }
-
-    lastKnowStateAlert(){
-       BdApi.alert("Last known state", "<div class='bd-modal-inner inner-1JeGVc'><div class='header header-1R_AjF'><div class='title'>Content Errors</div><div class='bd-modal-body'><div class='tab-bar-container'></div></div></div><div class='footer footer-2yfCgX'><button type='button'>Okay</button></div></div>")
+        } 
     }
 
     details(){
@@ -230,23 +209,12 @@ class McStatus {
             BdApi.React.createElement("div", {target: "blank"}, `Message of the day:`),
             BdApi.React.createElement("div", {target: "blank"}, `${this.lastKnowState.motd}`)
         ])
-        //BdApi.alert(`Details for: `, `Minecraft version:  \n Returned ip:  \n Port:  \n Max players:  \n Online players:  \n Message of the day: \n `)
      }
-
-    //interactions with the config file
-    saveSetting(k, d){
-        
-    }
 
     loadSetting(){
         let d;
         d = BdApi.loadData("McStatus", "ip")
         this.currentServer = d
     }
-
-    deleteSetting(k){
-        BdApi.deleteData("McStatus",k)
-    }
-
 }
 
