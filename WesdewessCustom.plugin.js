@@ -1,9 +1,9 @@
-//META{"name":"McStatus"}*//
+//META{"name":"McStatus", "website":"https://github.com/Wesdewess/MCserverstatus-BD-plugin", "source":"https://raw.githubusercontent.com/Wesdewess/MCserverstatus-BD-plugin/master/WesdewessCustom.plugin.js"}*//
 
 class McStatus {
 
     getName() {
-        return "Better Discord Minecraft server status checker"
+        return "Minecraft server status checker"
     }
 
     getDescription() {
@@ -17,19 +17,22 @@ class McStatus {
     getAuthor() {
         return "wesdewess"
     }
-    
+
     start(){
         //variables
         this.lastKnowState = {"ip":"","version":"","port":"","status":"","motd":"","maxPlayers":"","onlinePlayers":"","names":[],"time":"unknown"}
         this.cooldown = 3000
         this.lastRefresh = 1
         this.currentServer
+
+        if(BdApi.loadData("McStatus", "ip") === undefined){ //if the setting does not yet exist, create the setting
+            BdApi.saveData("McStatus", "ip", "mc.hypixel.net")
+        }
+
         this.loadSetting()
         console.log(this.currentServer)
 
-        if(BdApi.loadData("McStatus", "test") === undefined){ //if the setting does not yet exist, create the setting
-            this.saveSetting("test", "mc.hypixel.net")
-        }
+        
         
         if(document.getElementsByClassName("minecraftServers")[0] == null){
             this.createMainElement()
@@ -44,6 +47,34 @@ class McStatus {
         this.serverStatusCheck()
         this.refreshInterval = setInterval(()=> {this.serverStatusCheck()},30000) 
         console.log("started")
+    }
+    getSettingsPanel(){
+        let text = document.createElement('span')
+        text.innerText = 'Change the server ip: '
+        let textbox = document.createElement('input')
+        textbox.type = 'textbox'
+        textbox.value = this.currentServer
+        textbox.id = "serverIpSettingBox"
+        let settingsElement = document.createElement('div')
+        settingsElement.id = 'settingsElement'
+        let save = document.createElement('input')
+        save.type = 'button'
+        save.value = 'save'
+        save.style.color = '#fff'
+        save.style.backgroundColor = '#7289da'
+        save.style.borderRadius = '3px'
+        save.style.fontWeight = 'bold'
+        save.addEventListener('click', () => {let ip = document.getElementById('serverIpSettingBox').value
+        this.currentServer = ip
+        BdApi.saveData("McStatus","ip", ip)
+        BdApi.showToast(`Ip changed to: ${this.currentServer}`, {})
+        this.serverStatusCheck()})
+        settingsElement.appendChild(text)
+        settingsElement.appendChild(textbox)
+        settingsElement.appendChild(save)
+        
+        let settingspanel = settingsElement
+		return settingspanel;
     }
 
     stop(){
@@ -73,17 +104,17 @@ class McStatus {
         mcDiv.style.height = 'auto'
 
         //more info button
-        let addButton = document.createElement('button')
-        addButton.classList.add('add-button')
-        addButton.style.cssFloat = 'right'
-        addButton.innerText = "details"
-        addButton.style.marginRight = '10px'
-        addButton.style.color = '#fff'
-        addButton.style.backgroundColor = '#7289da'
-        addButton.style.fontSize = '17px'
-        addButton.style.borderRadius = '3px'
-        addButton.addEventListener('click', ()=> this.details())
-        mcDiv.appendChild(addButton)
+        let details = document.createElement('button')
+        details.classList.add('add-button')
+        details.style.cssFloat = 'right'
+        details.innerText = "details"
+        details.style.marginRight = '10px'
+        details.style.color = '#fff'
+        details.style.backgroundColor = '#7289da'
+        details.style.fontSize = '17px'
+        details.style.borderRadius = '3px'
+        details.addEventListener('click', ()=> this.details())
+        mcDiv.appendChild(details)
 
         //refresh button
         let refreshButton = document.createElement('button')
@@ -122,7 +153,7 @@ class McStatus {
         if(d.getTime() > (this.lastRefresh + this.cooldown)){ //check if the set cooldown before another refresh is allowed, has passed
             //console.log(this.loadSetting())
             this.loadSetting()
-            fetch("https://api.mcsrvstat.us/2/" + BdApi.loadData("McStatus", "test"))
+            fetch("https://api.mcsrvstat.us/2/" + this.currentServer)
             .then(response => response.json())
             .then(data => {
                 
@@ -143,7 +174,7 @@ class McStatus {
                             this.lastKnowState.names[0] = "-"
                         }
                         status = '<span style="color: green; font-weight: bold;">online</span>'
-                        document.getElementById("infoBox").innerHTML = `<div>IP: ${data.ip} Status: ${status} <span title="${playersOnline}" >Players: ${data.players.online}/${data.players.max}</span> MOTD: ${data.motd.html} </div>`
+                        document.getElementById("infoBox").innerHTML = `<div><span style="font-weight: bold">${this.currentServer}:</span> Status: ${status} <span title="${playersOnline}" >Players: ${data.players.online}/${data.players.max}</span> MOTD: ${data.motd.html} </div>`
                         
                         this.lastKnowState.ip = data.ip
                         this.lastKnowState.maxPlayers = data.players.max
@@ -155,7 +186,7 @@ class McStatus {
                         this.lastKnowState.time = d.getDate() + "/"+ (d.getMonth()+1)+"/"+d.getFullYear() + " " + d.getHours() + ":" +d.getMinutes() + ":" + d.getSeconds()
                     } else{
                         status = '<span style="color: red; font-weight: bold;">offline</span>'
-                        document.getElementById("infoBox").innerHTML = "<div>IP: "+ this.currentServer +" Status: " + status +" Last seen online at: "+ this.lastKnowState.time + "</div>"
+                        document.getElementById("infoBox").innerHTML = "<div><span style='font-weight: bold'>"+ this.currentServer +":</span> Status: " + status +" Last seen online at: "+ this.lastKnowState.time + "</div>"
                         
                     }
                      
@@ -200,12 +231,12 @@ class McStatus {
 
     //interactions with the config file
     saveSetting(k, d){
-        BdApi.saveData("McStatus", k, d)
+        
     }
 
     loadSetting(){
         let d;
-        d = BdApi.loadData("McStatus", "test")
+        d = BdApi.loadData("McStatus", "ip")
         this.currentServer = d
     }
 
