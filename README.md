@@ -17,7 +17,7 @@ Enter the desired ip adress and click save.
 
 The status of your chosen minecraft server will automatically update every 30 seconds, or you can click 
 the refresh button in the top right of the screen.
-
+Hover over "Players" to see who is online.
 For more details you can click the "details" button.
 
 If the server you are watching happens to go offline, it's last know time to be online will be shown
