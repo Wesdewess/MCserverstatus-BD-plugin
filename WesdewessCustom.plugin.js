@@ -27,6 +27,7 @@ class McStatus {
 
         if(BdApi.loadData("McStatus", "ip") === undefined){ //if the setting does not yet exist, create the setting
             BdApi.saveData("McStatus", "ip", "mc.hypixel.net")
+            BdApi.alert("Minecraft server status checker","Thank you for using this plugin! To keep tabs on your favorite minecraft server, go to the 'plugins' tab in your discord settings and click on 'settings' for this plugin. For more information go to: https://github.com/Wesdewess/MCserverstatus-BD-plugin")
         }
 
         this.loadSetting()
