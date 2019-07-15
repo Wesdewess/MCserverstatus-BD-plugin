@@ -1,5 +1,5 @@
 # MCserverstatus-BD-plugin
-a plugin for betterDiscord to show the status of a minecraft server in your discord client
+A plugin for betterDiscord to show the status of a minecraft server in your discord client.
 
 This is a plugin for Better Discord: https://betterdiscord.net/home/
 
