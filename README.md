@@ -3,9 +3,8 @@ A plugin for betterDiscord to show the status of a minecraft server in your disc
 
 This is a plugin for Better Discord: https://betterdiscord.net/home/
 
-how to use:
-
-Make sure you have installed Better Discord.
+# how to use:
+Make sure you have Better Discord installed.
 
 Place the plugin file in your plugins folder for better discord. To open this folder go 
 to your discord settings > plugins > Open plugin folder
