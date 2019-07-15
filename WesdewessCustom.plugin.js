@@ -27,9 +27,10 @@ class McStatus {
 
         if(BdApi.loadData("McStatus", "ip") === undefined){ //if the setting does not yet exist, create the setting
             BdApi.saveData("McStatus", "ip", "mc.hypixel.net")
+            BdApi.saveData("McStatus","lastOnline", "")
             BdApi.alert("Minecraft server status checker","Thank you for using this plugin! To keep tabs on your favorite minecraft server, go to the 'plugins' tab in your discord settings and click on 'settings' for this plugin. For more information go to: https://github.com/Wesdewess/MCserverstatus-BD-plugin")
         }
-
+        this.lastKnowState.time = BdApi.loadData("McStatus","lastOnline")
         this.loadSetting()
         console.log(this.currentServer)
 
@@ -68,6 +69,7 @@ class McStatus {
         save.addEventListener('click', () => {let ip = document.getElementById('serverIpSettingBox').value
         this.currentServer = ip
         BdApi.saveData("McStatus","ip", ip)
+        BdApi.saveData("McStatus","lastOnline", "")
         BdApi.showToast(`Ip changed to: ${this.currentServer}`, {})
         this.serverStatusCheck()})
         settingsElement.appendChild(text)
@@ -185,6 +187,7 @@ class McStatus {
                         this.lastKnowState.port = data.port
                         this.lastKnowState.status = "online"
                         this.lastKnowState.time = d.getDate() + "/"+ (d.getMonth()+1)+"/"+d.getFullYear() + " " + d.getHours() + ":" +d.getMinutes() + ":" + d.getSeconds()
+                        BdApi.saveData("McStatus","lastOnline", this.lastKnowState.time)
                     } else{
                         status = '<span style="color: red; font-weight: bold;">offline</span>'
                         document.getElementById("infoBox").innerHTML = "<div><span style='font-weight: bold'>"+ this.currentServer +":</span> Status: " + status +" Last seen online at: "+ this.lastKnowState.time + "</div>"
